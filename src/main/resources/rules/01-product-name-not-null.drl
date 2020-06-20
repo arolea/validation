@@ -1,0 +1,16 @@
+import com.rolea.learning.validation.domain.Product;
+import com.rolea.learning.validation.service.ValidationError;
+
+global com.rolea.learning.validation.service.ValidationResult validationResult;
+global com.rolea.learning.validation.service.ProductAdditionalData additionalData;
+
+dialect  "mvel"
+dialect  "java"
+
+rule "Ensure product has a non-null name"
+    when
+        productInstance:Product(name == null);
+    then
+        String message = String.format("Product with id %d has a null name", productInstance.getId());
+        validationResult.addValidationError(ValidationError.builder().message(message).build());
+end

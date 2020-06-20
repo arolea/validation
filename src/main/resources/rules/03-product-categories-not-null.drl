@@ -1,0 +1,16 @@
+import com.rolea.learning.validation.domain.Product;
+import com.rolea.learning.validation.service.ValidationError;
+
+global com.rolea.learning.validation.service.ValidationResult validationResult;
+global com.rolea.learning.validation.service.ProductAdditionalData additionalData;
+
+dialect  "mvel"
+dialect  "java"
+
+rule "Ensure product has at least one category"
+    when
+        productInstance:Product(categories == null || categories.isEmpty);
+    then
+        String message = String.format("Product with id %d has no categories", productInstance.getId());
+        validationResult.addValidationError(ValidationError.builder().message(message).build());
+end

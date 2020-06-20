@@ -1,0 +1,34 @@
+import com.rolea.learning.validation.domain.Product;
+import com.rolea.learning.validation.domain.Category;
+import com.rolea.learning.validation.service.ValidationWarning;
+
+global com.rolea.learning.validation.service.ValidationResult validationResult;
+global com.rolea.learning.validation.service.ProductAdditionalData additionalData;
+
+dialect  "mvel"
+dialect  "java"
+
+function boolean validateClashingCategories(Product product) {
+    String firstCategoryName = "Category 1";
+    String secondCategoryName = "Category 2";
+
+    if(product.getCategories() == null || product.getCategories().size() == 0){
+        return false;
+    }
+
+    boolean containsFirstCategory = product.getCategories().stream()
+        .anyMatch(category -> firstCategoryName.equals(category.getName()));
+    boolean containsSecondCategory = product.getCategories().stream()
+            .anyMatch(category -> secondCategoryName.equals(category.getName()));
+
+    return containsFirstCategory && containsSecondCategory;
+}
+
+rule "Ensure product has no clashing categories (a product can't be part of both 'Category 1' and 'Category 2')"
+    when
+        productInstance:Product()
+        eval(validateClashingCategories(productInstance))
+    then
+        String message = String.format("Product with id %d has clashing categories", productInstance.getId());
+        validationResult.addValidationWarning(ValidationWarning.builder().message(message).build());
+end
