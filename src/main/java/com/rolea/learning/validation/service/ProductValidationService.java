@@ -7,8 +7,6 @@ import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,41 +20,33 @@ public class ProductValidationService {
     @Autowired
     private KieContainer kieContainer;
 
-    public ValidationResult validateProduct(Product product, ProductAdditionalData data){
-        KieSession kieSession = kieContainer.newKieSession();
-
-        ValidationResult validationResult = ValidationResult.builder()
-                .validationWarnings(new LinkedList<>())
-                .validationErrors(new LinkedList<>())
-                .build();
-        kieSession.setGlobal("validationResult", validationResult);
-        kieSession.setGlobal("additionalData", data);
-
-        kieSession.insert(product);
-        kieSession.fireAllRules();
-        kieSession.dispose();
-
-        return validationResult;
-    }
-
-    public Map<Product, ValidationResult> validateProducts(List<Product> products, ProductAdditionalData data){
-        if(isEmpty(products)){
+    public Map<Product, ValidationResult> validateProducts(List<Product> products, ProductAdditionalData data) {
+        if (isEmpty(products)) {
             return emptyMap();
         }
 
-        Map<Product, ValidationResult> result = new HashMap<>();
+        // create a new KIE session
+        KieSession kieSession = kieContainer.newKieSession();
 
-        products.forEach(product -> {
-            try {
-                log.info("Validation product with id {}", product.getId());
-                result.put(product, validateProduct(product, data));
-                log.info("Successfully validated product with id {}", product.getId());
-            } catch (Exception e){
-                log.warn("Failed to validate product with id {}", product.getId(), e);
-            }
-        });
+        // add some rule engine execution logging
+        kieSession.addEventListener(new RuleFiredEventListener());
 
-        return result;
+        // initialize and set the result container and the additional data
+        ValidationResultContainer validationResultContainer = ValidationResultContainer.builder()
+                .build();
+        validationResultContainer.initializeContainer(products);
+        kieSession.setGlobal("resultContainer", validationResultContainer);
+        kieSession.setGlobal("additionalData", data);
+
+        // add facts to the session
+        products.forEach(kieSession::insert);
+
+        // execute the rules
+        kieSession.fireAllRules();
+        kieSession.dispose();
+
+        // get the validation result
+        return validationResultContainer.getValidationResultMap();
     }
 
 }

@@ -1,12 +1,11 @@
 import com.rolea.learning.validation.domain.Product;
 import com.rolea.learning.validation.domain.Category;
 import com.rolea.learning.validation.service.ValidationWarning;
+import com.rolea.learning.validation.service.ValidationResultContainer;
+import com.rolea.learning.validation.service.ProductAdditionalData;
 
-global com.rolea.learning.validation.service.ValidationResult validationResult;
-global com.rolea.learning.validation.service.ProductAdditionalData additionalData;
-
-dialect  "mvel"
-dialect  "java"
+global ValidationResultContainer resultContainer;
+global ProductAdditionalData additionalData;
 
 function boolean validateClashingCategories(Product product) {
     String firstCategoryName = "Category 1";
@@ -24,11 +23,11 @@ function boolean validateClashingCategories(Product product) {
     return containsFirstCategory && containsSecondCategory;
 }
 
-rule "Ensure product has no clashing categories (a product can't be part of both 'Category 1' and 'Category 2')"
+rule "Product has no clashing categories (a product can't be part of both 'Category 1' and 'Category 2')"
     when
         productInstance:Product()
         eval(validateClashingCategories(productInstance))
     then
         String message = String.format("Product with id %d has clashing categories", productInstance.getId());
-        validationResult.addValidationWarning(ValidationWarning.builder().message(message).build());
+        resultContainer.addValidationWarning(productInstance, message);
 end

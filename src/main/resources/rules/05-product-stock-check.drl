@@ -1,13 +1,12 @@
 import com.rolea.learning.validation.domain.Product;
 import com.rolea.learning.validation.service.ValidationWarning;
 import com.rolea.learning.validation.service.ProductAdditionalData;
+import com.rolea.learning.validation.service.ValidationResultContainer;
+import com.rolea.learning.validation.service.ProductAdditionalData;
 import java.util.*;
 
-global com.rolea.learning.validation.service.ValidationResult validationResult;
-global com.rolea.learning.validation.service.ProductAdditionalData additionalData;
-
-dialect  "mvel"
-dialect  "java"
+global ValidationResultContainer resultContainer;
+global ProductAdditionalData additionalData;
 
 function boolean validateStock(Product product, ProductAdditionalData additionalData) {
     Map<Long, Long> stockInfo = additionalData.getProductStockData();
@@ -17,11 +16,11 @@ function boolean validateStock(Product product, ProductAdditionalData additional
              stockInfo.get(product.getId()) > 0);
 }
 
-rule "Ensure there is a positive stock for a product"
+rule "Product is in stock"
     when
         productInstance:Product()
         eval(validateStock(productInstance, additionalData))
     then
         String message = String.format("Product with id %d is currently out of stock", productInstance.getId());
-        validationResult.addValidationWarning(ValidationWarning.builder().message(message).build());
+        resultContainer.addValidationWarning(productInstance, message);
 end

@@ -1,0 +1,2 @@
+Changes to facts (session data) trigger rule reevaluation
+Changes to global objects do not trigger rule reevaluation. Global objects are good candidates for getting results out of rule eval.
