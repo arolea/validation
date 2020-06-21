@@ -6,9 +6,8 @@ import com.rolea.learning.validation.service.ProductAdditionalData;
 global ValidationResultContainer resultContainer;
 global ProductAdditionalData additionalData;
 
-salience 10;
-
 rule "Product has at least one category"
+    salience 10
     when
         productInstance:Product(categories == null || categories.isEmpty);
     then

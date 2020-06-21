@@ -18,3 +18,6 @@ the equals() method is used to determine equality).
 
 Salience defines rules execution order (useful for stateful sessions, when changes made to the facts by one rule can
 trigger another rule)
+
+Functions allow you to add Java functions within .drl files
+Queries allow you to query the facts (working memory) from java code

@@ -7,7 +7,15 @@ import com.rolea.learning.validation.service.ProductAdditionalData;
 global ValidationResultContainer resultContainer;
 global ProductAdditionalData additionalData;
 
-salience 10;
+rule "Product has no clashing categories (a product can't be part of both 'Category 1' and 'Category 2')"
+    salience 10
+    when
+        productInstance:Product()
+        eval(validateClashingCategories(productInstance))
+    then
+        String message = String.format("Product with id %d has clashing categories", productInstance.getId());
+        resultContainer.addValidationWarning(productInstance, message);
+end
 
 function boolean validateClashingCategories(Product product) {
     String firstCategoryName = "Category 1";
@@ -24,12 +32,3 @@ function boolean validateClashingCategories(Product product) {
 
     return containsFirstCategory && containsSecondCategory;
 }
-
-rule "Product has no clashing categories (a product can't be part of both 'Category 1' and 'Category 2')"
-    when
-        productInstance:Product()
-        eval(validateClashingCategories(productInstance))
-    then
-        String message = String.format("Product with id %d has clashing categories", productInstance.getId());
-        resultContainer.addValidationWarning(productInstance, message);
-end
