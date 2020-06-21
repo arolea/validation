@@ -4,7 +4,9 @@ import com.rolea.learning.validation.domain.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.kie.api.event.rule.AfterMatchFiredEvent;
 import org.kie.api.event.rule.DefaultAgendaEventListener;
+import org.springframework.stereotype.Component;
 
+@Component
 @Slf4j
 public class RuleFiredEventListener extends DefaultAgendaEventListener {
 

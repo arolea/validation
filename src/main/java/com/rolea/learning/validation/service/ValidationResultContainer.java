@@ -31,15 +31,19 @@ public class ValidationResultContainer {
     }
 
     public void addValidationWarning(Product product, String message) {
-        validationResultMap.get(product).addValidationWarning(ValidationWarning.builder()
-                .message(message)
-                .build());
+        synchronized (validationResultMap.get(product)){
+            validationResultMap.get(product).addValidationWarning(ValidationWarning.builder()
+                    .message(message)
+                    .build());;
+        }
     }
 
     public void addValidationError(Product product, String message) {
-        validationResultMap.get(product).addValidationError(ValidationError.builder()
-                .message(message)
-                .build());
+        synchronized (validationResultMap.get(product)){
+            validationResultMap.get(product).addValidationError(ValidationError.builder()
+                    .message(message)
+                    .build());;
+        }
     }
 
     private void initializeValidationResult(Product product) {

@@ -6,6 +6,7 @@ import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.KieModule;
 import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSessionsPool;
 import org.kie.internal.io.ResourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -46,4 +47,10 @@ public class DroolsConfig {
 
         return kieServices.newKieContainer(kieModule.getReleaseId());
     }
+
+    @Bean
+    public KieSessionsPool kieSessionsPool() throws IOException {
+        return kieContainer().newKieSessionsPool(10);
+    }
+
 }

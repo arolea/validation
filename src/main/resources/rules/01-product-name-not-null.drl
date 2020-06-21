@@ -6,6 +6,8 @@ import com.rolea.learning.validation.service.ProductAdditionalData;
 global ValidationResultContainer resultContainer;
 global ProductAdditionalData additionalData;
 
+salience 20;
+
 rule "Product name is not null"
     when
         productInstance:Product(name == null);

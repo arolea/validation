@@ -7,6 +7,8 @@ import com.rolea.learning.validation.service.ProductAdditionalData;
 global ValidationResultContainer resultContainer;
 global ProductAdditionalData additionalData;
 
+salience 10;
+
 function boolean validateClashingCategories(Product product) {
     String firstCategoryName = "Category 1";
     String secondCategoryName = "Category 2";

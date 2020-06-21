@@ -24,45 +24,28 @@ class ValidationApplicationTests {
 	private ProductValidationService productValidationService;
 
 	@Test
-	void testValidation() {
-		List<Product> products = Arrays.asList(
-				Product.builder()
-						.id(1L)
-						.name("First Product")
-						.categories(Arrays.asList(
-								Category.builder().name("Category 1").build(),
-								Category.builder().name("Category 3").build()
-						))
-						.price(10D)
-						.build(),
-				Product.builder()
-						.id(2L)
-						.price(-1D)
-						.categories(Arrays.asList(
-								Category.builder().name("Category 1").build(),
-								Category.builder().name("Category 2").build()
-						))
-						.build(),
-				Product.builder()
-						.id(3L)
-						.price(null)
-						.categories(null)
-						.build()
-		);
-
-		Map<Long, Long> productStockMap = new HashMap<>();
-
-		productStockMap.put(1L, 10L);
-		productStockMap.put(2L, 1L);
-		productStockMap.put(3L, null);
-
-		ProductAdditionalData additionalData = ProductAdditionalData.builder()
-				.productStockData(productStockMap)
-				.build();
+	void testStatefulValidation() {
+		List<Product> products = getProductList();
+		ProductAdditionalData additionalData = getProductAdditionalData();
 
 		Map<Product, ValidationResult> validationResults = productValidationService
-				.validateProducts(products, additionalData);
+				.validateProductsStateful(products, additionalData);
 
+		validateResults(products, validationResults);
+	}
+
+	@Test
+	void testStatelessValidation() {
+		List<Product> products = getProductList();
+		ProductAdditionalData additionalData = getProductAdditionalData();
+
+		Map<Product, ValidationResult> validationResults = productValidationService
+				.validateProductsStateless(products, additionalData);
+
+		validateResults(products, validationResults);
+	}
+
+	private void validateResults(List<Product> products, Map<Product, ValidationResult> validationResults) {
 		assertThat(validationResults.size()).isEqualTo(3);
 
 		ValidationResult result = validationResults.get(products.get(0));
@@ -101,6 +84,45 @@ class ValidationApplicationTests {
 				System.out.println();
 			});
 		}
+	}
+
+	private List<Product> getProductList(){
+		return Arrays.asList(
+				Product.builder()
+						.id(1L)
+						.name("First Product")
+						.categories(Arrays.asList(
+								Category.builder().name("Category 1").build(),
+								Category.builder().name("Category 3").build()
+						))
+						.price(10D)
+						.build(),
+				Product.builder()
+						.id(2L)
+						.price(-1D)
+						.categories(Arrays.asList(
+								Category.builder().name("Category 1").build(),
+								Category.builder().name("Category 2").build()
+						))
+						.build(),
+				Product.builder()
+						.id(3L)
+						.price(null)
+						.categories(null)
+						.build()
+		);
+	}
+
+	private ProductAdditionalData getProductAdditionalData(){
+		Map<Long, Long> productStockMap = new HashMap<>();
+
+		productStockMap.put(1L, 10L);
+		productStockMap.put(2L, 1L);
+		productStockMap.put(3L, null);
+
+		return ProductAdditionalData.builder()
+				.productStockData(productStockMap)
+				.build();
 	}
 
 }

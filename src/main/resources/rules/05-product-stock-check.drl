@@ -8,6 +8,8 @@ import java.util.*;
 global ValidationResultContainer resultContainer;
 global ProductAdditionalData additionalData;
 
+salience 0;
+
 function boolean validateStock(Product product, ProductAdditionalData additionalData) {
     Map<Long, Long> stockInfo = additionalData.getProductStockData();
 

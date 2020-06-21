@@ -1,2 +1,20 @@
-Changes to facts (session data) trigger rule reevaluation
-Changes to global objects do not trigger rule reevaluation. Global objects are good candidates for getting results out of rule eval.
+Drools components:
+- Rules: The .drl files, stored in the production memory
+- Facts: The data that is matched against the rules, stored in the working memory
+- Agenda: Location where matching rules are sorted and executed (uses the Phreak algorithm)
+
+Kie session types:
+- Stateless: The inference process does not change the facts, data from a previous session is discarded before the next
+invocation. Common for validation and calculation workloads.
+- Stateful: The inference process can change facts, potentially triggering new rules, data is potentially reused
+between sessions. Common for monitoring workloads. By default, facts are propagated lazily (an explicit call to
+fireAllRules() is required after the insert() call).
+
+Changes to global objects do not trigger rule reevaluation. Global objects are good candidates for getting results out
+of rule eval.
+
+Fact quality modes: identity (default, facts are considered identical if they point to the same object) and equality (
+the equals() method is used to determine equality).
+
+Salience defines rules execution order (useful for stateful sessions, when changes made to the facts by one rule can
+trigger another rule)
