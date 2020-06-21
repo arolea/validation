@@ -53,12 +53,12 @@ class ValidationApplicationTests {
 
 		result = validationResults.get(products.get(1));
 		assertThat(result.isValid()).isFalse();
-		assertThat(result.getValidationWarnings().size()).isEqualTo(1);
+		assertThat(result.getValidationWarnings().size()).isEqualTo(2);
 		assertThat(result.getValidationErrors().size()).isEqualTo(2);
 
 		result = validationResults.get(products.get(2));
 		assertThat(result.isValid()).isFalse();
-		assertThat(result.getValidationWarnings().size()).isEqualTo(1);
+		assertThat(result.getValidationWarnings().size()).isEqualTo(2);
 		assertThat(result.getValidationErrors().size()).isEqualTo(3);
 
 		printValidationResults(validationResults);

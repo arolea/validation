@@ -8,6 +8,14 @@ import java.util.*;
 global ValidationResultContainer resultContainer;
 global ProductAdditionalData additionalData;
 
+function boolean validateStock(Product product, ProductAdditionalData additionalData) {
+    Map<Long, Long> stockInfo = additionalData.getProductStockData();
+
+    return !(stockInfo.containsKey(product.getId()) &&
+             stockInfo.get(product.getId()) != null &&
+             stockInfo.get(product.getId()) > 0);
+}
+
 rule "Product is in stock"
     salience 0
     when
@@ -18,10 +26,15 @@ rule "Product is in stock"
         resultContainer.addValidationWarning(productInstance, message);
 end
 
-function boolean validateStock(Product product, ProductAdditionalData additionalData) {
-    Map<Long, Long> stockInfo = additionalData.getProductStockData();
-
-    return !(stockInfo.containsKey(product.getId()) &&
-             stockInfo.get(product.getId()) != null &&
-             stockInfo.get(product.getId()) > 0);
-}
+rule "Product is in stock - no function"
+    salience 0
+    when
+        productInstance:Product(
+            (additionalData.getProductStockData().containsKey(id) &&
+             additionalData.getProductStockData().get(id) != null &&
+             additionalData.getProductStockData().get(id) > 0) != true
+        )
+    then
+        String message = String.format("Product with id %d is currently out of stock", productInstance.getId());
+        resultContainer.addValidationWarning(productInstance, message);
+end
