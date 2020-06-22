@@ -8,7 +8,8 @@ Kie session types:
 invocation. Common for validation and calculation workloads.
 - Stateful: The inference process can change facts, potentially triggering new rules, data is potentially reused
 between sessions. Common for monitoring workloads. By default, facts are propagated lazily (an explicit call to
-fireAllRules() is required after the insert() call).
+fireAllRules() is required after the insert() call). Note that Drools detect data changes that happen in .drl files,
+not changes that happen in java code as a side effect of invoking a given method
 
 Changes to global objects do not trigger rule reevaluation. Global objects are good candidates for getting results out
 of rule eval.

@@ -33,13 +33,18 @@ rule "Product has no clashing categories (a product can't be part of both 'Categ
         resultContainer.addValidationWarning(productInstance, message);
 end
 
+// for the when clause, you can chain conditions with 'and', 'or' or 'not'
+// if none is specified, 'and' is assumed
+// it is a best practice that variable defined in when start with '$'
+// you can also define variables while evaluating a fact (see $categories)
+// the ',' operator has the same semantics as '&&', operator precedence: '&&' > '||' > ','
 rule "Product has no clashing categories (a product can't be part of both 'Category 1' and 'Category 2') - no function"
     salience 10
     when
-        productInstance : Product()
-        Category(name == "Category 1") from productInstance.categories
-        Category(name == "Category 2") from productInstance.categories
+        $productInstance : Product($categories : categories) and
+        Category(name == "Category 1") from $categories and
+        Category(name == "Category 2") from $categories
     then
-        String message = String.format("Product with id %d has clashing categories", productInstance.getId());
-        resultContainer.addValidationWarning(productInstance, message);
+        String message = String.format("Product with id %d has clashing categories", $productInstance.getId());
+        resultContainer.addValidationWarning($productInstance, message);
 end
